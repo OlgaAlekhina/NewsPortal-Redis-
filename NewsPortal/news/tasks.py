@@ -22,5 +22,17 @@ def weekly_mail():
                 {'posts': posts})
 
             msg.attach_alternative(html_content, "text/html")
-
             msg.send()
+            
+@shared_task
+def news_mail(subject, from_email, recipients):
+    msg = EmailMultiAlternatives(
+                subject=subject,
+                from_email=from_email,
+                to=recipients
+            )
+
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+    
+    
