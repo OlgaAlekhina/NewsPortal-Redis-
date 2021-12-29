@@ -1,8 +1,8 @@
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
 from .models import Post, Category
+from .tasks import news_mail
 
 @receiver(m2m_changed, sender=Post.categories.through)
 def notify_subscribers(instance, action, pk_set, *args, **kwargs):
@@ -16,11 +16,5 @@ def notify_subscribers(instance, action, pk_set, *args, **kwargs):
             recipients = [user.email for user in category.subscribers.all()]
             subject=f'На сайте NewsPortal появилась новая статья: {instance.post_title}'
             from_email='olga-olechka-5@yandex.ru'
-            
-            msg = EmailMultiAlternatives(
-                subject=f'рецепт курицы',
-                ,
-                to=recipients
-            )
-            msg.attach_alternative(html_content, "text/html")
-            msg.send()
+            news_mail.delay(subject, from_email, recipients)
+           
