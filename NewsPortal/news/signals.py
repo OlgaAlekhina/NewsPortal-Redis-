@@ -14,9 +14,12 @@ def notify_subscribers(instance, action, pk_set, *args, **kwargs):
         for pk in pk_set:
             category = Category.objects.get(pk=pk)
             recipients = [user.email for user in category.subscribers.all()]
+            subject=f'На сайте NewsPortal появилась новая статья: {instance.post_title}'
+            from_email='olga-olechka-5@yandex.ru'
+            
             msg = EmailMultiAlternatives(
                 subject=f'рецепт курицы',
-                from_email='olga-olechka-5@yandex.ru',
+                ,
                 to=recipients
             )
             msg.attach_alternative(html_content, "text/html")
