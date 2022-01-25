@@ -1,14 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.core.paginator import Paginator
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from .models import Post, Category
+from .models import Post, Category, Author
 from .filters import PostFilter
 from .forms import PostForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
-
 
 
 class NewsList(ListView):
@@ -23,6 +22,7 @@ class NewsDetail(DetailView):
     model = Post
     template_name = 'post.html'
     context_object_name = 'post'
+
 
 class NewsSearch(ListView):
     model = Post
@@ -61,6 +61,7 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
     form_class = PostForm
     permission_required = ('news.add_post')
 
+
 class NewsUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'post_update_form.html'
     form_class = PostForm
@@ -87,19 +88,30 @@ class UserPageView(LoginRequiredMixin, TemplateView):
         return context
 
 
+class CategoryListView(ListView):
+    context_object_name = 'category_posts'
+    template_name = 'post_category.html'
+    paginate_by = 5
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, id=self.kwargs['cats'])
+        return Post.objects.filter(categories=self.category).order_by('-post_time')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = self.category
+        context['is_not_subscriber'] = not self.request.user.subscribed_categories.filter(id=self.kwargs['cats']).exists()
+        return context
+
+
 @login_required
 def upgrade_me(request):
     user = request.user
     authors_group = Group.objects.get(name='authors')
     if not request.user.groups.filter(name='authors').exists():
         authors_group.user_set.add(user)
+        Author.objects.create(author=user)
     return redirect('/user_page')
-
-
-def CategoryView(request, cats):
-    cats_name = Category.objects.get(id=cats).name
-    category_posts = Post.objects.filter(categories__id=cats)
-    return render(request, 'post_category.html', {'cats':cats, 'category_posts':category_posts, 'cats_name':cats_name})
 
 
 @login_required
@@ -108,5 +120,3 @@ def subscribe_category(request, cats):
     current_cat = Category.objects.get(id=cats)
     current_cat.subscribers.add(user)
     return redirect(current_cat)
-
-
