@@ -169,8 +169,8 @@ EMAIL_USE_SSL = True
 SERVER_EMAIL = 'olga-olechka-5'
 DEFAULT_FROM_EMAIL = 'olga-olechka-5@yandex.ru'
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = 'redis://:cTPJ57WXHFpGV3CjYs1UsFR1FHndrFV5@ redis-15623.c294.ap-northeast-1-2.ec2.cloud.redislabs.com:15623/0'
+CELERY_RESULT_BACKEND = 'redis://:cTPJ57WXHFpGV3CjYs1UsFR1FHndrFV5@ redis-15623.c294.ap-northeast-1-2.ec2.cloud.redislabs.com:15623 /0'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
