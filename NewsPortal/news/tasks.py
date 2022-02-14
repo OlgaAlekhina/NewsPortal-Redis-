@@ -25,7 +25,7 @@ def weekly_mail():
             msg.send()
             
 @shared_task
-def news_mail(subject, from_email, recipients):
+def news_mail(subject, from_email, recipients, html_content):
     msg = EmailMultiAlternatives(
                 subject=subject,
                 from_email=from_email,
