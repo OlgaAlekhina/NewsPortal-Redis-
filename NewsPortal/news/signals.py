@@ -16,5 +16,5 @@ def notify_subscribers(instance, action, pk_set, *args, **kwargs):
             recipients = [user.email for user in category.subscribers.all()]
             subject=f'На сайте NewsPortal появилась новая статья: {instance.post_title}'
             from_email='olga-olechka-5@yandex.ru'
-            news_mail.delay(subject, from_email, recipients)
+            news_mail.delay(subject, from_email, recipients, html_content)
            
