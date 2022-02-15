@@ -6,7 +6,7 @@ from django.core.mail import EmailMultiAlternatives
 
 @shared_task
 def weekly_mail():
-    from_date = datetime.now() - timedelta(days=2)
+    from_date = datetime.now() - timedelta(days=7)
     for cat in Category.objects.all():
         posts = Post.objects.filter(categories=cat).filter(post_time__gte=from_date)
         if posts.exists():
