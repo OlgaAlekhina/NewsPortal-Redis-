@@ -1,0 +1,5 @@
+celery==5.2.7
+Django==4.1
+django_allauth==0.51.0
+django_filter==22.1
+redis==4.3.4
